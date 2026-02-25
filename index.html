@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>EduSmart AI Platform</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(135deg,#667eea,#764ba2);
+  color:white;
+  text-align:center;
+}
+
+.section{
+  display:none;
+  padding:40px;
+}
+
+.active{
+  display:block;
+}
+
+.card{
+  background:white;
+  color:black;
+  width:300px;
+  margin:20px auto;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.3);
+}
+
+button{
+  padding:10px 20px;
+  margin:5px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  background:#667eea;
+  color:white;
+}
+
+button:hover{
+  background:#5a67d8;
+}
+
+input, select{
+  padding:8px;
+  margin:5px;
+  width:90%;
+}
+.nav-btn{
+  background:#222;
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SECTION -->
+<div id="login" class="section active">
+  <h1>🎓 EduSmart Learning Platform</h1>
+
+  <div class="card">
+    <h2>Student Login</h2>
+    <input type="text" id="studentName" placeholder="Enter Name">
+    <button onclick="login('student')">Login</button>
+  </div>
+
+  <div class="card">
+    <h2>Teacher Login</h2>
+    <input type="text" placeholder="Enter Name">
+    <button onclick="login('teacher')">Login</button>
+  </div>
+
+  <div class="card">
+    <h2>Admin Login</h2>
+    <input type="text" placeholder="Enter Name">
+    <button onclick="login('admin')">Login</button>
+  </div>
+</div>
+
+<!-- STUDENT DASHBOARD -->
+<div id="student" class="section">
+  <h1>👩‍🎓 Student Dashboard</h1>
+
+  <button onclick="showSlide(1)">Quiz</button>
+  <button onclick="showSlide(2)">Video</button>
+  <button onclick="showSlide(3)">Mini Game</button>
+  <button onclick="showSlide(4)">Report</button>
+  <button class="nav-btn" onclick="goHome()">Logout</button>
+
+  <!-- QUIZ -->
+  <div id="slide1" class="slide active">
+    <h2>Quick Quiz</h2>
+    <p>5 + 7 = ?</p>
+    <button onclick="checkAnswer(12)">12</button>
+    <button onclick="checkAnswer(10)">10</button>
+    <p id="quizResult"></p>
+  </div>
+
+  <!-- VIDEO -->
+  <div id="slide2" class="slide" style="display:none">
+    <h2>Fun Learning Video</h2>
+    <iframe width="300" height="200"
+    src="https://www.youtube.com/embed/2ePf9rue1Ao">
+    </iframe>
+  </div>
+
+  <!-- MINI GAME -->
+  <div id="slide3" class="slide" style="display:none">
+    <h2>Mini Math Game</h2>
+    <button onclick="generateGame()">Start</button>
+    <p id="gameQuestion"></p>
+  </div>
+
+  <!-- REPORT -->
+  <div id="slide4" class="slide" style="display:none">
+    <h2>Performance Report</h2>
+    <p id="scoreDisplay">Score: 0</p>
+    <button onclick="window.print()">Download Report</button>
+  </div>
+</div>
+
+<!-- TEACHER DASHBOARD -->
+<div id="teacher" class="section">
+  <h1>👩‍🏫 Teacher Dashboard</h1>
+  <h2>Analytics</h2>
+  <p>Total Students: 25</p>
+  <p id="risk">Risk Students: 0</p>
+  <button class="nav-btn" onclick="goHome()">Logout</button>
+</div>
+
+<!-- ADMIN DASHBOARD -->
+<div id="admin" class="section">
+  <h1>⚙️ Admin Panel</h1>
+  <p>Platform Overview</p>
+  <p>Total Users: 100</p>
+  <button class="nav-btn" onclick="goHome()">Logout</button>
+</div>
+
+<script>
+let score = 0;
+let riskCount = 0;
+
+function login(role){
+  document.querySelectorAll('.section').forEach(sec=>sec.classList.remove('active'));
+  document.getElementById(role).classList.add('active');
+}
+
+function goHome(){
+  document.querySelectorAll('.section').forEach(sec=>sec.classList.remove('active'));
+  document.getElementById('login').classList.add('active');
+}
+
+function showSlide(num){
+  document.querySelectorAll('.slide').forEach(s=>s.style.display="none");
+  document.getElementById("slide"+num).style.display="block";
+}
+
+function checkAnswer(ans){
+  if(ans===12){
+    score+=10;
+    document.getElementById("quizResult").innerHTML="✅ Correct!";
+  }else{
+    riskCount++;
+    document.getElementById("quizResult").innerHTML="❌ Wrong!";
+  }
+  document.getElementById("scoreDisplay").innerHTML="Score: "+score;
+  document.getElementById("risk").innerHTML="Risk Students: "+riskCount;
+}
+
+function generateGame(){
+  let a=Math.floor(Math.random()*10);
+  let b=Math.floor(Math.random()*10);
+  document.getElementById("gameQuestion").innerHTML="Solve: "+a+" + "+b;
+}
+</script>
+
+</body>
+</html>
