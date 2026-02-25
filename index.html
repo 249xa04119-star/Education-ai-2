@@ -1,182 +1,373 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>EduSmart AI Platform</title>
+<title>EduSmart AI - Startup Edition</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body{
-  margin:0;
-  font-family:Arial;
-  background:linear-gradient(135deg,#667eea,#764ba2);
-  color:white;
-  text-align:center;
+margin:0;
+font-family:'Poppins',sans-serif;
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+color:white;
+text-align:center;
 }
 
 .section{
-  display:none;
-  padding:40px;
+display:none;
+padding:30px;
+opacity:0;
+transform:translateY(20px);
+transition:0.5s;
 }
 
-.active{
-  display:block;
+.section.active{
+display:block;
+opacity:1;
+transform:translateY(0);
 }
 
 .card{
-  background:white;
-  color:black;
-  width:300px;
-  margin:20px auto;
-  padding:20px;
-  border-radius:12px;
-  box-shadow:0 4px 15px rgba(0,0,0,0.3);
+background:rgba(255,255,255,0.1);
+backdrop-filter:blur(15px);
+border-radius:20px;
+padding:25px;
+margin:20px auto;
+width:350px;
+box-shadow:0 8px 32px rgba(0,0,0,0.4);
+transition:0.4s;
+}
+
+.card:hover{
+transform:translateY(-5px);
 }
 
 button{
-  padding:10px 20px;
-  margin:5px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  background:#667eea;
-  color:white;
+padding:10px 20px;
+margin:6px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:bold;
+background:#00c6ff;
+color:black;
+transition:0.3s;
 }
 
 button:hover{
-  background:#5a67d8;
+transform:scale(1.05);
+background:#0072ff;
+color:white;
 }
 
-input, select{
-  padding:8px;
-  margin:5px;
-  width:90%;
+input,select,textarea{
+padding:8px;
+margin:6px;
+width:90%;
+border-radius:6px;
+border:none;
 }
-.nav-btn{
-  background:#222;
+
+.progress{
+width:80%;
+background:#ddd;
+margin:10px auto;
+border-radius:10px;
 }
+
+.progress-bar{
+height:20px;
+background:#4CAF50;
+width:0%;
+border-radius:10px;
+}
+
+.tab{display:none;}
 </style>
 </head>
 <body>
 
-<!-- LOGIN SECTION -->
-<div id="login" class="section active">
-  <h1>🎓 EduSmart Learning Platform</h1>
+<!-- ROLE SELECTION -->
+<div id="roleSelect" class="section active">
+<h1>🚀 EduSmart AI</h1>
+<p>Personalized Learning. Intelligent Growth.</p>
+<button onclick="selectRole('student')">Student</button>
+<button onclick="selectRole('teacher')">Teacher</button>
+<button onclick="selectRole('admin')">Admin</button>
+</div>
 
-  <div class="card">
-    <h2>Student Login</h2>
-    <input type="text" id="studentName" placeholder="Enter Name">
-    <button onclick="login('student')">Login</button>
-  </div>
+<!-- LOGIN -->
+<div id="loginSection" class="section">
+<h2 id="roleTitle"></h2>
+<div class="card">
+<input type="text" id="name" placeholder="Full Name">
+<input type="email" placeholder="Email">
+<input type="password" placeholder="Password">
 
-  <div class="card">
-    <h2>Teacher Login</h2>
-    <input type="text" placeholder="Enter Name">
-    <button onclick="login('teacher')">Login</button>
-  </div>
+<select id="classSelect">
+<option value="">Select Class</option>
+<option>1</option><option>2</option><option>3</option>
+<option>4</option><option>5</option><option>6</option>
+<option>7</option><option>8</option><option>9</option>
+<option>10</option><option>11</option><option>12</option>
+</select>
 
-  <div class="card">
-    <h2>Admin Login</h2>
-    <input type="text" placeholder="Enter Name">
-    <button onclick="login('admin')">Login</button>
-  </div>
+<select id="streamSelect">
+<option value="">Select Stream</option>
+<option>MPC</option>
+<option>BiPC</option>
+<option>Commerce</option>
+<option>Arts</option>
+</select>
+
+<button onclick="login()">Login</button>
+</div>
 </div>
 
 <!-- STUDENT DASHBOARD -->
-<div id="student" class="section">
-  <h1>👩‍🎓 Student Dashboard</h1>
+<div id="studentDash" class="section">
+<h2>Welcome, <span id="studentName"></span> 👩‍🎓</h2>
+<button onclick="toggleLanguage()">🌍 Telugu Mode</button>
 
-  <button onclick="showSlide(1)">Quiz</button>
-  <button onclick="showSlide(2)">Video</button>
-  <button onclick="showSlide(3)">Mini Game</button>
-  <button onclick="showSlide(4)">Report</button>
-  <button class="nav-btn" onclick="goHome()">Logout</button>
+<br>
+<button onclick="showTab('quiz')">Quiz</button>
+<button onclick="showTab('game')">Mini Game</button>
+<button onclick="showTab('videos')">Videos</button>
+<button onclick="showTab('word')">Word Simplifier</button>
+<button onclick="showTab('previous')">Previous Papers</button>
+<button onclick="showTab('leaderboard')">Leaderboard</button>
+<button onclick="showTab('report')">Report</button>
+<button onclick="logout()">Logout</button>
 
-  <!-- QUIZ -->
-  <div id="slide1" class="slide active">
-    <h2>Quick Quiz</h2>
-    <p>5 + 7 = ?</p>
-    <button onclick="checkAnswer(12)">12</button>
-    <button onclick="checkAnswer(10)">10</button>
-    <p id="quizResult"></p>
-  </div>
+<!-- QUIZ -->
+<div id="quiz" class="tab" style="display:block">
+<h3>Smart Quiz</h3>
+<p id="question"></p>
+<button onclick="answer(1)" id="opt1"></button>
+<button onclick="answer(2)" id="opt2"></button>
+<button onclick="answer(3)" id="opt3"></button>
+<button onclick="answer(4)" id="opt4"></button>
+<p id="quizResult"></p>
 
-  <!-- VIDEO -->
-  <div id="slide2" class="slide" style="display:none">
-    <h2>Fun Learning Video</h2>
-    <iframe width="300" height="200"
-    src="https://www.youtube.com/embed/2ePf9rue1Ao">
-    </iframe>
-  </div>
+<div class="progress">
+<div class="progress-bar" id="progressBar"></div>
+</div>
+</div>
 
-  <!-- MINI GAME -->
-  <div id="slide3" class="slide" style="display:none">
-    <h2>Mini Math Game</h2>
-    <button onclick="generateGame()">Start</button>
-    <p id="gameQuestion"></p>
-  </div>
+<!-- MINI GAME -->
+<div id="game" class="tab">
+<h3>Speed Math Game</h3>
+<button onclick="generateGame()">Start</button>
+<p id="gameQ"></p>
+<input id="gameAns" placeholder="Answer">
+<button onclick="checkGame()">Submit</button>
+<p id="gameScore"></p>
+</div>
 
-  <!-- REPORT -->
-  <div id="slide4" class="slide" style="display:none">
-    <h2>Performance Report</h2>
-    <p id="scoreDisplay">Score: 0</p>
-    <button onclick="window.print()">Download Report</button>
-  </div>
+<!-- VIDEOS -->
+<div id="videos" class="tab">
+<h3>Learning Video</h3>
+<iframe width="300" height="200"
+src="https://www.youtube.com/embed/2ePf9rue1Ao">
+</iframe>
+</div>
+
+<!-- WORD SIMPLIFIER -->
+<div id="word" class="tab">
+<h3>Word Problem Simplifier</h3>
+<textarea id="wordInput" placeholder="Paste problem here"></textarea>
+<button onclick="simplify()">Simplify</button>
+<p id="simpleOutput"></p>
+</div>
+
+<!-- PREVIOUS -->
+<div id="previous" class="tab">
+<h3>Previous Year Questions</h3>
+<p>1. Derivative of x²?</p>
+<p>2. Explain Photosynthesis.</p>
+<p>3. Define GDP.</p>
+</div>
+
+<!-- LEADERBOARD -->
+<div id="leaderboard" class="tab">
+<h3>Leaderboard</h3>
+<p id="leaderData"></p>
+</div>
+
+<!-- REPORT -->
+<div id="report" class="tab">
+<h3>Performance Report</h3>
+<p id="scoreDisplay"></p>
+<p id="riskDisplay"></p>
+<button onclick="window.print()">Download Report</button>
+</div>
+
 </div>
 
 <!-- TEACHER DASHBOARD -->
-<div id="teacher" class="section">
-  <h1>👩‍🏫 Teacher Dashboard</h1>
-  <h2>Analytics</h2>
-  <p>Total Students: 25</p>
-  <p id="risk">Risk Students: 0</p>
-  <button class="nav-btn" onclick="goHome()">Logout</button>
+<div id="teacherDash" class="section">
+<h2>Teacher Analytics</h2>
+<canvas id="analyticsChart"></canvas>
+<p id="riskStudents"></p>
+<button onclick="logout()">Logout</button>
 </div>
 
 <!-- ADMIN DASHBOARD -->
-<div id="admin" class="section">
-  <h1>⚙️ Admin Panel</h1>
-  <p>Platform Overview</p>
-  <p>Total Users: 100</p>
-  <button class="nav-btn" onclick="goHome()">Logout</button>
+<div id="adminDash" class="section">
+<h2>Admin Overview</h2>
+<p>Total Users: 200+</p>
+<button onclick="logout()">Logout</button>
 </div>
 
 <script>
-let score = 0;
-let riskCount = 0;
 
-function login(role){
-  document.querySelectorAll('.section').forEach(sec=>sec.classList.remove('active'));
-  document.getElementById(role).classList.add('active');
+let currentRole="";
+let score=0;
+let wrong=0;
+let questionIndex=0;
+let telugu=false;
+
+const questions=[
+{q:"5 + 7 = ?",correct:2,opts:["10","12","13","14"]},
+{q:"Water formula?",correct:2,opts:["CO2","H2O","O2","NaCl"]},
+{q:"9 × 8 = ?",correct:3,opts:["70","71","72","73"]},
+{q:"Capital of India?",correct:3,opts:["Mumbai","Chennai","New Delhi","Kolkata"]},
+{q:"Largest planet?",correct:2,opts:["Earth","Jupiter","Mars","Venus"]}
+];
+
+window.onload=function(){
+if(localStorage.getItem("score")){
+score=parseInt(localStorage.getItem("score"));
+wrong=parseInt(localStorage.getItem("wrong"));
+}
+};
+
+function selectRole(role){
+currentRole=role;
+switchSection("loginSection");
+document.getElementById("roleTitle").innerHTML="Login as "+role.toUpperCase();
 }
 
-function goHome(){
-  document.querySelectorAll('.section').forEach(sec=>sec.classList.remove('active'));
-  document.getElementById('login').classList.add('active');
+function login(){
+let name=document.getElementById("name").value;
+localStorage.setItem("studentName",name);
+
+if(currentRole==="student"){
+switchSection("studentDash");
+document.getElementById("studentName").innerHTML=name;
+loadQuestion();
+updateReport();
+}
+else if(currentRole==="teacher"){
+switchSection("teacherDash");
+loadChart();
+}
+else{
+switchSection("adminDash");
+}
 }
 
-function showSlide(num){
-  document.querySelectorAll('.slide').forEach(s=>s.style.display="none");
-  document.getElementById("slide"+num).style.display="block";
+function logout(){
+switchSection("roleSelect");
 }
 
-function checkAnswer(ans){
-  if(ans===12){
-    score+=10;
-    document.getElementById("quizResult").innerHTML="✅ Correct!";
-  }else{
-    riskCount++;
-    document.getElementById("quizResult").innerHTML="❌ Wrong!";
-  }
-  document.getElementById("scoreDisplay").innerHTML="Score: "+score;
-  document.getElementById("risk").innerHTML="Risk Students: "+riskCount;
+function switchSection(id){
+document.querySelectorAll('.section').forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+}
+
+function showTab(tab){
+document.querySelectorAll('.tab').forEach(t=>t.style.display="none");
+document.getElementById(tab).style.display="block";
+}
+
+function loadQuestion(){
+let q=questions[questionIndex];
+document.getElementById("question").innerHTML=q.q;
+document.getElementById("opt1").innerHTML=q.opts[0];
+document.getElementById("opt2").innerHTML=q.opts[1];
+document.getElementById("opt3").innerHTML=q.opts[2];
+document.getElementById("opt4").innerHTML=q.opts[3];
+}
+
+function answer(choice){
+if(choice===questions[questionIndex].correct){
+score+=10;
+}else{
+wrong++;
+}
+questionIndex=(questionIndex+1)%questions.length;
+updateProgress();
+loadQuestion();
+updateReport();
+}
+
+function updateProgress(){
+let percent=(score/50)*100;
+document.getElementById("progressBar").style.width=percent+"%";
+}
+
+function calculateRisk(){
+let accuracy=(score/(score+wrong*10))*100;
+let riskScore=100-accuracy;
+if(riskScore>60) return "HIGH ⚠";
+if(riskScore>30) return "MEDIUM";
+return "LOW";
+}
+
+function updateReport(){
+localStorage.setItem("score",score);
+localStorage.setItem("wrong",wrong);
+
+document.getElementById("scoreDisplay").innerHTML="Score: "+score;
+document.getElementById("riskDisplay").innerHTML="Risk Level: "+calculateRisk();
+document.getElementById("leaderData").innerHTML=
+localStorage.getItem("studentName")+" - "+score+" Points";
+document.getElementById("riskStudents").innerHTML=
+"Students at Risk: "+(calculateRisk()=="HIGH ⚠"?1:0);
 }
 
 function generateGame(){
-  let a=Math.floor(Math.random()*10);
-  let b=Math.floor(Math.random()*10);
-  document.getElementById("gameQuestion").innerHTML="Solve: "+a+" + "+b;
+let a=Math.floor(Math.random()*20);
+let b=Math.floor(Math.random()*20);
+window.correctGame=a+b;
+document.getElementById("gameQ").innerHTML=a+" + "+b+" = ?";
 }
-</script>
 
+function checkGame(){
+let ans=parseInt(document.getElementById("gameAns").value);
+if(ans===window.correctGame){score+=5;}
+updateReport();
+document.getElementById("gameScore").innerHTML="Total Score: "+score;
+}
+
+function simplify(){
+document.getElementById("simpleOutput").innerHTML=
+"Break the problem into smaller steps and solve carefully.";
+}
+
+function toggleLanguage(){
+telugu=!telugu;
+alert(telugu?"తెలుగు మోడ్ ప్రారంభించబడింది":"English Mode Activated");
+}
+
+function loadChart(){
+new Chart(document.getElementById('analyticsChart'),{
+type:'bar',
+data:{
+labels:['Math','Science','English'],
+datasets:[{
+label:'Performance',
+data:[80,65,90],
+backgroundColor:['#00c6ff','#0072ff','#4CAF50']
+}]
+}
+});
+}
+
+</script>
 </body>
 </html>
